@@ -4,3 +4,4 @@ __pycache__/
 .env
 precos.db
 debug_amazon.html
+logs/
