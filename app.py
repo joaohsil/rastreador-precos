@@ -24,7 +24,7 @@ def carregar_configuracao():
         return json.load(arquivo)
 
 
-def monitorar_produto(produto_config):
+def monitorar_produto(produto_config, modo_teste=False):
     produto = produto_config["nome"]
     url = produto_config["url"]
 
@@ -46,9 +46,14 @@ def monitorar_produto(produto_config):
         logging.info(f"Último preço salvo: R$ {ultimo_preco:.2f}")
         logging.info(f"Data do último registro: {data_hora}")
 
-        if preco_atual < ultimo_preco:
-            diferenca = ultimo_preco - preco_atual
-            logging.warning("ALERTA: O preço caiu!")
+        if preco_atual < ultimo_preco or modo_teste:
+            diferenca = max(ultimo_preco - preco_atual, 0)
+
+            if modo_teste and preco_atual >= ultimo_preco:
+                logging.warning("MODO TESTE: simulando alerta de queda de preço.")
+            else:
+                logging.warning("ALERTA: O preço caiu!")
+
             logging.warning(f"Queda de R$ {diferenca:.2f}")
 
             enviar_email_alerta(produto, preco_atual, ultimo_preco, url)
@@ -69,12 +74,16 @@ def monitorar_produto(produto_config):
 def main():
     config = carregar_configuracao()
     produtos = config["produtos"]
+    modo_teste = config.get("modo_teste", False)
 
     criar_banco()
 
+    if modo_teste:
+        logging.warning("MODO TESTE ATIVADO: alertas podem ser enviados mesmo sem queda real.")
+
     for produto_config in produtos:
         try:
-            monitorar_produto(produto_config)
+            monitorar_produto(produto_config, modo_teste)
         except Exception as erro:
             nome = produto_config.get("nome", "Produto sem nome")
             logging.error("-" * 60)
