@@ -1,4 +1,8 @@
 {
-  "produto": "O Rei de Amarelo - Edição Definitiva",
-  "url": "https://www.amazon.com.br/Rei-Amarelo-Edi%C3%A7%C3%A3o-Definitiva/dp/6555982683/ref=pd_sbs_d_sccl_1_1/146-5545016-1048166?psc=1"
+  "produtos": [
+    {
+      "nome": "O Rei de Amarelo - Edição Definitiva",
+      "url": "https://www.amazon.com.br/Rei-Amarelo-Edi%C3%A7%C3%A3o-Definitiva/dp/6555982683/ref=pd_sbs_d_sccl_1_1/146-5545016-1048166?psc=1"
+    }
+  ]
 }

@@ -10,20 +10,18 @@ def carregar_configuracao():
         return json.load(arquivo)
 
 
-def main():
-    config = carregar_configuracao()
+def monitorar_produto(produto_config):
+    produto = produto_config["nome"]
+    url = produto_config["url"]
 
-    produto = config["produto"]
-    url = config["url"]
-
-    criar_banco()
+    print("-" * 60)
+    print(f"Monitorando: {produto}")
 
     ultimo_registro = buscar_ultimo_preco(produto)
 
     html = baixar_html(url)
     preco_atual = buscar_preco_amazon(html)
 
-    print(f"Produto: {produto}")
     print(f"Preço atual: R$ {preco_atual:.2f}")
 
     if ultimo_registro is None:
@@ -54,5 +52,21 @@ def main():
     print("Preço atual salvo no banco de dados com sucesso.")
 
 
+def main():
+    config = carregar_configuracao()
+    produtos = config["produtos"]
+
+    criar_banco()
+
+    for produto_config in produtos:
+        try:
+            monitorar_produto(produto_config)
+        except Exception as erro:
+            nome = produto_config.get("nome", "Produto sem nome")
+            print("-" * 60)
+            print(f"Erro ao monitorar produto: {nome}")
+            print(f"Detalhes do erro: {erro}")
+
+
 if __name__ == "__main__":
-    main()
+    main()      
